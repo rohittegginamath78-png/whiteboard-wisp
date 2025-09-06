@@ -40,20 +40,11 @@ export const Hero = () => {
               </Button>
             </div>
             
-            {/* Stats */}
-            <div className="flex flex-wrap gap-8 justify-center lg:justify-start mt-12 animate-slide-up" style={{ animationDelay: "0.4s" }}>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-foreground">50K+</div>
-                <div className="text-sm text-muted-foreground">Active Users</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-foreground">1M+</div>
-                <div className="text-sm text-muted-foreground">Drawings Created</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-foreground">99.9%</div>
-                <div className="text-sm text-muted-foreground">Uptime</div>
-              </div>
+            {/* Early access note */}
+            <div className="text-center lg:text-left mt-8 animate-slide-up" style={{ animationDelay: "0.4s" }}>
+              <p className="text-sm text-muted-foreground">
+                🎨 Early Access — No credit card required
+              </p>
             </div>
           </div>
           
