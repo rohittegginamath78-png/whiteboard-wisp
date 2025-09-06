@@ -1,13 +1,11 @@
-import { Header } from "@/components/Header";
-import { Hero } from "@/components/Hero";
+import InteractiveHero from "@/components/ui/hero-section-nexus";
 import { Features } from "@/components/Features";
 import { CTA } from "@/components/CTA";
 
 const Index = () => {
   return (
     <div className="min-h-screen">
-      <Header />
-      <Hero />
+      <InteractiveHero />
       <Features />
       <CTA />
     </div>
