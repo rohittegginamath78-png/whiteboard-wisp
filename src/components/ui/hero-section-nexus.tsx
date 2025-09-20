@@ -24,6 +24,8 @@ import {
     type TargetAndTransition,
     type Variants,
 } from 'framer-motion';
+import { useAuth } from '@/contexts/AuthContext';
+import { AuthModal } from '@/components/auth/AuthModal';
 
 function cn(...classes: (string | undefined | null | boolean)[]): string {
   return classes.filter(Boolean).join(" ");
@@ -358,11 +360,13 @@ interface Dot {
 }
 
 const InteractiveHero: React.FC = () => {
+   const { user, signOut } = useAuth();
    const canvasRef = useRef<HTMLCanvasElement>(null);
    const animationFrameId = useRef<number | null>(null);
    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
    const [openDropdown, setOpenDropdown] = useState<string | null>(null);
    const [isScrolled, setIsScrolled] = useState<boolean>(false);
+   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
 
    const { scrollY } = useScroll();
    useMotionValueEvent(scrollY, "change", (latest) => {
@@ -673,7 +677,26 @@ const InteractiveHero: React.FC = () => {
                 </div>
 
                 <div className="flex items-center flex-shrink-0 space-x-4 lg:space-x-6">
-                    <NavLink href="#" className="hidden md:inline-block">Sign in</NavLink>
+                    {user ? (
+                        <div className="hidden md:flex items-center space-x-3">
+                            <span className="text-sm text-gray-300">
+                                {user.email}
+                            </span>
+                            <button
+                                onClick={signOut}
+                                className="text-sm text-gray-300 hover:text-white transition-colors"
+                            >
+                                Sign out
+                            </button>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={() => setShowAuthModal(true)}
+                            className="hidden md:inline-block text-sm text-gray-300 hover:text-white transition-colors"
+                        >
+                            Sign in
+                        </button>
+                    )}
 
                     <motion.a
                         href="#"
@@ -710,7 +733,30 @@ const InteractiveHero: React.FC = () => {
                             <NavLink href="#" onClick={() => setIsMobileMenuOpen(false)}>Resources</NavLink>
                             <NavLink href="#" onClick={() => setIsMobileMenuOpen(false)}>Pricing</NavLink>
                             <hr className="w-full border-t border-gray-700/50 my-2"/>
-                            <NavLink href="#" onClick={() => setIsMobileMenuOpen(false)}>Sign in</NavLink>
+                            {user ? (
+                                <div className="flex flex-col items-center space-y-2">
+                                    <span className="text-sm text-gray-300">{user.email}</span>
+                                    <button
+                                        onClick={() => {
+                                            signOut();
+                                            setIsMobileMenuOpen(false);
+                                        }}
+                                        className="text-sm text-gray-300 hover:text-white transition-colors"
+                                    >
+                                        Sign out
+                                    </button>
+                                </div>
+                            ) : (
+                                <button
+                                    onClick={() => {
+                                        setShowAuthModal(true);
+                                        setIsMobileMenuOpen(false);
+                                    }}
+                                    className="text-sm text-gray-300 hover:text-white transition-colors"
+                                >
+                                    Sign in
+                                </button>
+                            )}
                         </div>
                     </motion.div>
                 )}
@@ -829,6 +875,10 @@ const InteractiveHero: React.FC = () => {
             </motion.div>
         </main>
 
+        <AuthModal
+            isOpen={showAuthModal}
+            onClose={() => setShowAuthModal(false)}
+        />
     </div>
   );
 };
