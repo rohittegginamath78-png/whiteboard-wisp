@@ -24,6 +24,7 @@ import {
     type TargetAndTransition,
     type Variants,
 } from 'framer-motion';
+import { AuthButtons } from '@/components/auth/AuthButtons';
 
 function cn(...classes: (string | undefined | null | boolean)[]): string {
   return classes.filter(Boolean).join(" ");
@@ -673,17 +674,7 @@ const InteractiveHero: React.FC = () => {
                 </div>
 
                 <div className="flex items-center flex-shrink-0 space-x-4 lg:space-x-6">
-                    <NavLink href="#" className="hidden md:inline-block">Sign in</NavLink>
-
-                    <motion.a
-                        href="#"
-                        className="bg-[#0CF2A0] text-[#111111] px-4 py-[6px] rounded-md text-sm font-semibold hover:bg-opacity-90 transition-colors duration-200 whitespace-nowrap shadow-sm hover:shadow-md"
-                        whileHover={{ scale: 1.03, y: -1 }}
-                        whileTap={{ scale: 0.97 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 15 }}
-                    >
-                        Start Drawing
-                    </motion.a>
+                    <AuthButtons />
 
                     <motion.button
                         className="md:hidden text-gray-300 hover:text-white z-50"
@@ -710,7 +701,9 @@ const InteractiveHero: React.FC = () => {
                             <NavLink href="#" onClick={() => setIsMobileMenuOpen(false)}>Resources</NavLink>
                             <NavLink href="#" onClick={() => setIsMobileMenuOpen(false)}>Pricing</NavLink>
                             <hr className="w-full border-t border-gray-700/50 my-2"/>
-                            <NavLink href="#" onClick={() => setIsMobileMenuOpen(false)}>Sign in</NavLink>
+                            <div className="flex justify-center">
+                                <AuthButtons />
+                            </div>
                         </div>
                     </motion.div>
                 )}
