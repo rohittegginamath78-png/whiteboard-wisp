@@ -1,13 +1,9 @@
-import InteractiveHero from "@/components/ui/hero-section-nexus";
-import { Features } from "@/components/Features";
-import { CTA } from "@/components/CTA";
+import { Whiteboard } from "@/components/whiteboard/Whiteboard";
 
 const Index = () => {
   return (
     <div className="min-h-screen">
-      <InteractiveHero />
-      <Features />
-      <CTA />
+      <Whiteboard />
     </div>
   );
 };
