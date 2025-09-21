@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { AuthButtons } from "@/components/auth/AuthButtons";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -36,7 +35,8 @@ export const Header = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
-            <AuthButtons />
+            <Button variant="ghost">Sign In</Button>
+            <Button variant="hero">Get Started</Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -80,8 +80,9 @@ export const Header = () => {
               >
                 Contact
               </a>
-              <div className="pt-4">
-                <AuthButtons />
+              <div className="flex flex-col gap-2 pt-4">
+                <Button variant="ghost" className="justify-start">Sign In</Button>
+                <Button variant="hero" className="justify-start">Get Started</Button>
               </div>
             </nav>
           </div>
