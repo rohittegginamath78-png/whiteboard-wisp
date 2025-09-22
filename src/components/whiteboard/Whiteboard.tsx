@@ -24,9 +24,11 @@ export const Whiteboard = () => {
       backgroundColor: "#ffffff",
     });
 
-    // Initialize the freeDrawingBrush
-    canvas.freeDrawingBrush.color = activeColor;
-    canvas.freeDrawingBrush.width = brushSize;
+    // Initialize the freeDrawingBrush safely
+    if (canvas.freeDrawingBrush) {
+      canvas.freeDrawingBrush.color = activeColor;
+      canvas.freeDrawingBrush.width = brushSize;
+    }
 
     // Handle drawing state
     canvas.on('path:created', () => {
