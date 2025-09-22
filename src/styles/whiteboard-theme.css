@@ -1,0 +1,82 @@
+/* SketchSpark unique Excalidraw theme overrides */
+.sketchspark .excalidraw {
+	/* Brand palette - light green accent (matches home) */
+	--color-primary: #8efac8; /* light green */
+	--color-primary-darker: #67eeb4;
+	--color-selection: #0CF2A0;
+	--color-surface1: #0f0f0f;
+	--color-surface2: #141414;
+	--color-surface3: #1a1a1a;
+	--color-bg: #111111;
+	--color-text-primary: #e5e7eb;
+	--color-text-secondary: #cbd5e1;
+	--color-text-muted: #9ca3af;
+	--color-border: #262626;
+	--icon-fill: #d1d5db;
+}
+
+/* Toolbar: left-docked look, rounded and subtle glow on active */
+.sketchspark .excalidraw .App-toolbar {
+	background: linear-gradient(180deg, rgba(20,20,20,0.95), rgba(16,16,16,0.95));
+	border: 1px solid var(--color-border);
+	box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.03) inset;
+	border-radius: 14px;
+}
+
+.sketchspark .excalidraw .ToolIcon_type_button,
+.sketchspark .excalidraw .ToolIcon_type_checkbox {
+	border-radius: 10px !important;
+	background: var(--color-surface2);
+	border: 1px solid var(--color-border);
+}
+
+.sketchspark .excalidraw .ToolIcon_type_button[aria-pressed="true"],
+.sketchspark .excalidraw .ToolIcon_type_checkbox[aria-pressed="true"] {
+	background: rgba(142, 250, 200, 0.12);
+	box-shadow: 0 0 0 1px rgba(142,250,200,0.35), 0 0 16px rgba(142,250,200,0.25);
+	border-color: rgba(142,250,200,0.45);
+}
+
+/* Panels & menus */
+.sketchspark .excalidraw .Island {
+	background: var(--color-surface2);
+	border: 1px solid var(--color-border);
+	box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+	border-radius: 12px;
+}
+
+.sketchspark .excalidraw .Modal__content,
+.sketchspark .excalidraw .popover,
+.sketchspark .excalidraw .DropdownMenu__menu {
+	background: var(--color-surface2);
+	border: 1px solid var(--color-border);
+}
+
+/* Primary buttons and active toggles */
+.sketchspark .excalidraw .Button--primary,
+.sketchspark .excalidraw button.primary,
+.sketchspark .excalidraw .ToolButton[aria-pressed="true"] {
+	background-color: var(--color-primary) !important;
+	color: #0d0d0d !important;
+	border-color: var(--color-primary-darker) !important;
+}
+
+/* Color picker selected swatch border */
+.sketchspark .excalidraw .color-picker-swatch[aria-checked="true"],
+.sketchspark .excalidraw .ColorPicker__label input:checked + .ColorPicker__swatch {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 0;
+}
+
+/* Canvas wrapping frame subtle border to differentiate from background */
+.sketchspark .excalidraw .canvas-background {
+	background: #121212;
+}
+
+/* Hide footer for cleaner look */
+.sketchspark .excalidraw .layer-ui__wrapper__footer-left,
+.sketchspark .excalidraw .layer-ui__wrapper__footer-right {
+	display: none !important;
+}
+
+

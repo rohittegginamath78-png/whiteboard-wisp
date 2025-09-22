@@ -640,6 +640,7 @@ const InteractiveHero: React.FC = () => {
                 <div className="hidden md:flex items-center justify-center flex-grow space-x-6 lg:space-x-8 px-4">
                     <NavLink href="#">Features</NavLink>
                     <NavLink href="#">Templates</NavLink>
+                    <NavLink href="/dashboard">Dashboard</NavLink>
 
                     <div
                         className="relative"
@@ -675,6 +676,14 @@ const InteractiveHero: React.FC = () => {
 
                 <div className="flex items-center flex-shrink-0 space-x-4 lg:space-x-6">
                     <AuthButtons />
+                    <motion.a
+                        href="/dashboard"
+                        className="inline-block bg-[#0CF2A0] text-[#111111] px-4 py-2 rounded-md text-sm font-semibold hover:bg-opacity-90 transition-colors duration-200 whitespace-nowrap"
+                        whileHover={{ scale: 1.03, y: -1 }}
+                        whileTap={{ scale: 0.97 }}
+                    >
+                        Dashboard
+                    </motion.a>
 
                     <motion.button
                         className="md:hidden text-gray-300 hover:text-white z-50"
@@ -704,6 +713,12 @@ const InteractiveHero: React.FC = () => {
                             <div className="flex justify-center">
                                 <AuthButtons />
                             </div>
+                            <a
+                                href="/dashboard"
+                                className="w-full text-center bg-[#0CF2A0] text-[#111111] px-5 py-2 rounded-md text-sm font-semibold hover:bg-opacity-90 transition-colors duration-200"
+                            >
+                                Dashboard
+                            </a>
                         </div>
                     </motion.div>
                 )}
