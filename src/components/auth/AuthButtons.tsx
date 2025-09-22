@@ -24,12 +24,12 @@ export const AuthButtons = () => {
 
   return (
     <div className="flex items-center gap-3">
-      <SignInButton>
+      <SignInButton mode="modal">
         <Button variant="ghost" size="sm">
           Sign In
         </Button>
       </SignInButton>
-      <SignUpButton>
+      <SignUpButton mode="modal">
         <Button size="sm" className="gradient-primary text-white border-0">
           Sign Up
         </Button>
