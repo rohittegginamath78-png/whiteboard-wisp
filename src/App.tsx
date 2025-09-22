@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { CLERK_PUBLISHABLE_KEY } from "@/lib/clerk";
 import Index from "./pages/Index";
+import Dashboard from "./pages/Dashboard";
+import Whiteboard from "./pages/Whiteboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -19,6 +21,9 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/whiteboard/new" element={<Whiteboard />} />
+            <Route path="/whiteboard/:id" element={<Whiteboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

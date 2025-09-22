@@ -36,7 +36,7 @@ export const Header = () => {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
             <Button variant="ghost">Sign In</Button>
-            <Button variant="hero">Get Started</Button>
+            <Button variant="hero" onClick={() => window.location.href = '/dashboard'}>Dashboard</Button>
           </div>
 
           {/* Mobile Menu Button */}
