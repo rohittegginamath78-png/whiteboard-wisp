@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Excalidraw, MainMenu, WelcomeScreen } from "@excalidraw/excalidraw";
 import "@excalidraw/excalidraw/index.css";
 import { useNavigate, useParams } from "react-router-dom";
-import { useUser } from "@clerk/clerk-react";
+import { useUser, useOrganization } from "@clerk/clerk-react";
 import "@/styles/whiteboard-theme.css";
 
 export type Tool = "select" | "draw" | "rectangle" | "circle" | "arrow" | "text";
@@ -11,6 +11,7 @@ const Whiteboard = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useUser();
+  const { organization } = useOrganization();
   const [initialData, setInitialData] = useState<any>(null);
 
   useEffect(() => {
@@ -43,8 +44,17 @@ const Whiteboard = () => {
       const boards = boardsRaw ? JSON.parse(boardsRaw) : [];
       const boardId = id || "new";
       const title = (elements as any[])?.find((e: any) => e.type === "text" && (e as any).text)?.text || "Untitled";
+      const orgId = organization?.id || "personal";
+      
       const updated = [
-        { id: boardId, title, lastModified: new Date().toISOString(), collaborators: 1 },
+        { 
+          id: boardId, 
+          title, 
+          lastModified: new Date().toISOString(), 
+          collaborators: organization?.membersCount || 1,
+          organizationId: orgId,
+          organizationName: organization?.name || "Personal"
+        },
         ...boards.filter((b: any) => b.id !== boardId),
       ].slice(0, 200);
       localStorage.setItem("user:boards", JSON.stringify(updated));

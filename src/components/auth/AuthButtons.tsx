@@ -1,4 +1,4 @@
-import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/clerk-react";
+import { SignInButton, SignUpButton, UserButton, useUser, OrganizationSwitcher } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
 
 export const AuthButtons = () => {
@@ -11,6 +11,18 @@ export const AuthButtons = () => {
   if (isSignedIn) {
     return (
       <div className="flex items-center gap-4">
+        <OrganizationSwitcher
+          appearance={{
+            elements: {
+              rootBox: "flex items-center gap-2",
+              organizationSwitcherTrigger: "px-3 py-1.5 rounded-md bg-muted hover:bg-muted/80 text-sm border border-border",
+              organizationPreviewAvatarBox: "w-6 h-6",
+            }
+          }}
+          afterCreateOrganizationUrl="/dashboard"
+          afterSelectOrganizationUrl="/dashboard"
+          createOrganizationMode="modal"
+        />
         <UserButton 
           appearance={{
             elements: {

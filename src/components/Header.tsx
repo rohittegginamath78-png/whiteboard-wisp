@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { AuthButtons } from "@/components/auth/AuthButtons";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -35,8 +36,8 @@ export const Header = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="ghost">Sign In</Button>
-            <Button variant="hero" onClick={() => window.location.href = '/dashboard'}>Dashboard</Button>
+            <Button variant="ghost" onClick={() => window.location.href = '/dashboard'}>Dashboard</Button>
+            <AuthButtons />
           </div>
 
           {/* Mobile Menu Button */}
@@ -81,8 +82,7 @@ export const Header = () => {
                 Contact
               </a>
               <div className="flex flex-col gap-2 pt-4">
-                <Button variant="ghost" className="justify-start">Sign In</Button>
-                <Button variant="hero" className="justify-start">Get Started</Button>
+                <Button variant="ghost" className="justify-start" onClick={() => window.location.href = '/dashboard'}>Dashboard</Button>
               </div>
             </nav>
           </div>
