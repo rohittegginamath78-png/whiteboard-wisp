@@ -15,13 +15,15 @@ export const AuthButtons = () => {
           appearance={{
             elements: {
               rootBox: "flex items-center gap-2",
-              organizationSwitcherTrigger: "px-3 py-1.5 rounded-md bg-muted hover:bg-muted/80 text-sm border border-border",
+              organizationSwitcherTrigger: "px-3 py-1.5 rounded-md bg-muted hover:bg-muted/80 text-sm border border-border transition-colors data-[organization-switcher-trigger]:cursor-pointer",
               organizationPreviewAvatarBox: "w-6 h-6",
+              organizationSwitcherTriggerIcon: "text-muted-foreground",
             }
           }}
           afterCreateOrganizationUrl="/dashboard"
           afterSelectOrganizationUrl="/dashboard"
           createOrganizationMode="modal"
+          hidePersonal={false}
         />
         <UserButton 
           appearance={{
