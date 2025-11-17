@@ -4,6 +4,7 @@ import "@excalidraw/excalidraw/index.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { useUser, useOrganization } from "@clerk/clerk-react";
 import "@/styles/whiteboard-theme.css";
+import { Building2, Users } from "lucide-react";
 
 export type Tool = "select" | "draw" | "rectangle" | "circle" | "arrow" | "text";
 
@@ -68,11 +69,30 @@ const Whiteboard = () => {
   return (
     <div className="h-screen w-screen bg-[#111111] text-gray-200 flex flex-col sketchspark">
       <div className="h-12 w-full bg-[#0f0f0f] border-b border-gray-800 flex items-center justify-between px-4">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-md bg-[#0CF2A0]/15 grid place-items-center">
-            <div className="w-3.5 h-3.5 bg-[#0CF2A0] rounded-[3px]"></div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-md bg-[#0CF2A0]/15 grid place-items-center">
+              <div className="w-3.5 h-3.5 bg-[#0CF2A0] rounded-[3px]"></div>
+            </div>
+            <span className="text-sm font-semibold text-white">SketchSpark</span>
           </div>
-          <span className="text-sm font-semibold text-white">SketchSpark</span>
+          <div className="flex items-center gap-2 text-xs text-gray-400">
+            {organization ? (
+              <>
+                <Building2 className="h-3.5 w-3.5" />
+                <span>{organization.name}</span>
+                {organization.membersCount > 1 && (
+                  <>
+                    <span>•</span>
+                    <Users className="h-3.5 w-3.5" />
+                    <span>{organization.membersCount} members</span>
+                  </>
+                )}
+              </>
+            ) : (
+              <span>Personal Workspace</span>
+            )}
+          </div>
         </div>
         <div className="text-xs text-gray-300">Welcome{user?.fullName ? ", " : ""}{user?.fullName ?? user?.username ?? "Guest"}!</div>
       </div>
