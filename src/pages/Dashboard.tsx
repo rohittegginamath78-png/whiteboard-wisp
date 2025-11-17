@@ -1,24 +1,57 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, FileText, Users, Clock, ChevronLeft, ChevronRight } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Plus, FileText, Users, Clock, ChevronLeft, ChevronRight, UserPlus } from "lucide-react";
+import { useMemo, useState, useEffect } from "react";
+import { useOrganization } from "@clerk/clerk-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 const Dashboard = () => {
-  const [whiteboards] = useState(
-    Array.from({ length: 18 }).map((_, i) => ({
-      id: i + 1,
-      title: [
-        "Project Planning",
-        "Design Wireframes",
-        "Marketing Strategy",
-        "Sprint Retro",
-        "UX Research Notes",
-        "Product Roadmap",
-      ][i % 6] + ` ${i + 1}`,
-      lastModified: ["2 hours ago", "1 day ago", "3 days ago"][i % 3],
-      collaborators: (i % 5) + 1,
-    }))
-  );
+  const { organization, membership } = useOrganization();
+  const [whiteboards, setWhiteboards] = useState<any[]>([]);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+
+  // Load whiteboards for current organization
+  useEffect(() => {
+    const loadBoards = () => {
+      try {
+        const allBoardsRaw = localStorage.getItem("user:boards");
+        if (!allBoardsRaw) {
+          setWhiteboards([]);
+          return;
+        }
+        
+        const allBoards = JSON.parse(allBoardsRaw);
+        
+        // Filter boards by organization ID
+        const orgId = organization?.id || "personal";
+        const orgBoards = allBoards.filter((b: any) => {
+          const boardOrgId = b.organizationId || "personal";
+          return boardOrgId === orgId;
+        });
+        
+        setWhiteboards(orgBoards);
+      } catch (error) {
+        console.error("Error loading boards:", error);
+        setWhiteboards([]);
+      }
+    };
+
+    loadBoards();
+    
+    // Set up storage event listener for cross-tab updates
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "user:boards") {
+        loadBoards();
+      }
+    };
+    
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [organization?.id]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 6;
@@ -32,17 +65,87 @@ const Dashboard = () => {
     window.location.href = '/whiteboard/new';
   };
 
+  const handleInviteMember = async () => {
+    if (!organization) {
+      toast.error("No organization selected");
+      return;
+    }
+
+    if (!inviteEmail || !inviteEmail.includes("@")) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    try {
+      await organization.inviteMember({
+        emailAddress: inviteEmail,
+        role: "org:member"
+      });
+      
+      toast.success(`Invitation sent to ${inviteEmail}`);
+      setInviteEmail("");
+      setInviteDialogOpen(false);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to send invitation");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#111111] text-gray-200">
       {/* Local page header (compact) */}
       <header className="border-b border-gray-800/70 bg-[#111111]/90 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-white">Dashboard</h1>
-            <Button onClick={createNewWhiteboard} className="gap-2 bg-[#0CF2A0] text-[#111111] hover:bg-[#0CF2A0]/90">
-              <Plus className="w-4 h-4" />
-              New Whiteboard
-            </Button>
+            <div>
+              <h1 className="text-xl font-semibold text-white">Dashboard</h1>
+              {organization && (
+                <p className="text-sm text-gray-400 mt-0.5">{organization.name}</p>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              {organization && membership?.role === "org:admin" && (
+                <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="gap-2 border-gray-700 text-gray-300 hover:bg-[#1a1a1a]">
+                      <UserPlus className="w-4 h-4" />
+                      Invite
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="bg-[#1a1a1a] border-gray-800">
+                    <DialogHeader>
+                      <DialogTitle className="text-white">Invite Team Member</DialogTitle>
+                      <DialogDescription className="text-gray-400">
+                        Send an invitation to join {organization.name}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 pt-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="email" className="text-gray-200">Email Address</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="colleague@company.com"
+                          value={inviteEmail}
+                          onChange={(e) => setInviteEmail(e.target.value)}
+                          className="bg-[#111111] border-gray-700 text-white"
+                          onKeyDown={(e) => e.key === "Enter" && handleInviteMember()}
+                        />
+                      </div>
+                      <Button 
+                        onClick={handleInviteMember} 
+                        className="w-full bg-[#0CF2A0] text-[#111111] hover:bg-[#0CF2A0]/90"
+                      >
+                        Send Invitation
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              )}
+              <Button onClick={createNewWhiteboard} className="gap-2 bg-[#0CF2A0] text-[#111111] hover:bg-[#0CF2A0]/90">
+                <Plus className="w-4 h-4" />
+                New Whiteboard
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -53,12 +156,13 @@ const Dashboard = () => {
           {/* Welcome Section */}
           <div className="text-center space-y-2">
             <h2 className="text-3xl font-semibold text-white">
-              Create and collaborate on
-              <span className="text-[#0CF2A0] block mt-1">Ideas</span>
+              {organization ? `${organization.name}'s Workspace` : "Your Personal Workspace"}
             </h2>
             <p className="text-gray-400 text-base max-w-2xl mx-auto">
-              Create, collaborate, and bring your ideas to life with our powerful whiteboard
-              platform. Perfect for teams, educators, and creative professionals.
+              {organization 
+                ? `Collaborate with ${organization.membersCount} team member${organization.membersCount !== 1 ? 's' : ''} on shared whiteboards`
+                : "Create, collaborate, and bring your ideas to life with our powerful whiteboard platform"
+              }
             </p>
             <div className="flex justify-center gap-2 text-xs text-gray-400">
               <span className="flex items-center gap-1">
@@ -88,15 +192,20 @@ const Dashboard = () => {
               </CardHeader>
             </Card>
 
-            <Card className="cursor-pointer hover:shadow-md transition-shadow border-gray-800 bg-[#141414]">
-              <CardHeader className="text-center py-4">
-                <div className="w-10 h-10 bg-[#0CF2A0]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
-                  <Users className="w-5 h-5 text-[#0CF2A0]" />
-                </div>
-                <CardTitle>Join Team</CardTitle>
-                <CardDescription>Collaborate with your team</CardDescription>
-              </CardHeader>
-            </Card>
+            {organization && membership?.role === "org:admin" && (
+              <Card 
+                className="cursor-pointer hover:shadow-md transition-shadow border-gray-800 bg-[#141414]"
+                onClick={() => setInviteDialogOpen(true)}
+              >
+                <CardHeader className="text-center py-4">
+                  <div className="w-10 h-10 bg-[#0CF2A0]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
+                    <Users className="w-5 h-5 text-[#0CF2A0]" />
+                  </div>
+                  <CardTitle>Invite Members</CardTitle>
+                  <CardDescription>Add team members to collaborate</CardDescription>
+                </CardHeader>
+              </Card>
+            )}
 
             <Card className="cursor-pointer hover:shadow-md transition-shadow border-gray-800 bg-[#141414]">
               <CardHeader className="text-center py-4">
@@ -111,31 +220,46 @@ const Dashboard = () => {
 
           {/* Recent Whiteboards */}
           <div className="space-y-3">
-            <h3 className="text-lg font-semibold text-white">Recent Whiteboards</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {paginatedWhiteboards.map((board) => (
-                <Card key={board.id} className="cursor-pointer hover:shadow-md transition-shadow border-gray-800 bg-[#141414]">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-base text-white">{board.title}</CardTitle>
-                    <CardDescription className="flex items-center gap-4 text-gray-400">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        {board.lastModified}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Users className="w-4 h-4" />
-                        {board.collaborators}
-                      </span>
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="w-full h-28 bg-[#1f1f1f] rounded-md flex items-center justify-center border border-gray-800">
-                      <FileText className="w-7 h-7 text-gray-500" />
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <h3 className="text-lg font-semibold text-white">
+              {organization ? "Team Whiteboards" : "Your Whiteboards"}
+            </h3>
+            {whiteboards.length === 0 ? (
+              <div className="text-center py-12 text-gray-400">
+                <FileText className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p>No whiteboards yet. Create one to get started!</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {paginatedWhiteboards.map((board) => (
+                  <Card 
+                    key={board.id} 
+                    className="cursor-pointer hover:shadow-md transition-shadow border-gray-800 bg-[#141414]"
+                    onClick={() => window.location.href = `/whiteboard/${board.id}`}
+                  >
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base text-white">{board.title}</CardTitle>
+                      <CardDescription className="flex items-center gap-4 text-gray-400">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-4 h-4" />
+                          {new Date(board.lastModified).toLocaleDateString()}
+                        </span>
+                        {organization && (
+                          <span className="flex items-center gap-1">
+                            <Users className="w-4 h-4" />
+                            {organization.membersCount}
+                          </span>
+                        )}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="w-full h-28 bg-[#1f1f1f] rounded-md flex items-center justify-center border border-gray-800">
+                        <FileText className="w-7 h-7 text-gray-500" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
 
             {/* Pagination */}
             {totalPages > 1 && (
